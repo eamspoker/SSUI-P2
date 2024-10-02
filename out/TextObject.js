@@ -24,17 +24,26 @@ export class TextObject extends DrawnObjectBase {
     }
     get text() { return this._text; }
     set text(v) {
-        //=== YOUR CODE HERE ===
+        if (this._text !== v) {
+            this.damageAll();
+        }
+        this._text = v;
     }
     get font() { return this._font; }
     set font(v) {
-        //=== YOUR CODE HERE ===
+        if (this._font !== v) {
+            this.damageAll();
+        }
+        this._font = v;
     }
     get padding() { return this._padding; }
     set padding(v) {
         if (typeof v === 'number')
             v = { w: v, h: v };
-        //=== YOUR CODE HERE ===
+        if (this._padding !== v) {
+            this.damageAll();
+        }
+        this._padding = v;
     }
     get renderType() { return this._renderType; }
     set rederType(v) { this._renderType = v; }
@@ -45,7 +54,9 @@ export class TextObject extends DrawnObjectBase {
     //-------------------------------------------------------------------
     // Recalculate the size of this object based on the size of the text
     _recalcSize(ctx) {
-        //=== YOUR CODE HERE ===
+        let textMeasure = this._measureText(this.text, this.font, ctx);
+        this.w = textMeasure.w + this.padding.w * 2;
+        this.h = textMeasure.h + this.padding.h * 2;
         // set the size configuration to be fixed at that size
         this.wConfig = SizeConfig.fixed(this.w);
         this.hConfig = SizeConfig.fixed(this.h);
@@ -68,7 +79,16 @@ export class TextObject extends DrawnObjectBase {
             else {
                 clr = this.color.toString();
             }
-            //=== YOUR CODE HERE ===
+            const meas = this._measureText(this.text, this.font, ctx);
+            ctx.font = this.font;
+            if (this.renderType === "fill") {
+                ctx.fillStyle = clr;
+                ctx.fillText(this.text, this.padding.w, meas.baseln);
+            }
+            else {
+                ctx.strokeStyle = clr;
+                ctx.strokeText(this.text, this.padding.w, meas.baseln);
+            }
         }
         finally {
             // restore the drawing context to the state it was given to us in

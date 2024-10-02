@@ -74,14 +74,28 @@ export class IconObject extends DrawnObjectBase {
     }
     get resizesImage() { return this._resizesImage; }
     set resizesImage(v) {
-        //=== YOUR CODE HERE ===
+        // we change to a new setting if v is new but we DON'T call damage
+        // calling damage here will result in improperly calling damage during
+        // TopObject's layoutAndDrawAll
+        if (v != this.resizesImage) {
+            this._resizesImage = v;
+        }
     }
     //-------------------------------------------------------------------
     // Methods
     //-------------------------------------------------------------------
     // If our size is determined by the image, resize us to match (otherwise do nothing).
     _resize() {
-        //=== YOUR CODE HERE ===
+        // we only resize the bounding box if the image doesn't get resized
+        if (!this.resizesImage) {
+            if (this.image && this.image.canvasImage) {
+                // set width and height to image width and height
+                // we use the protected variables as to not improperly call
+                // damageAll() in TopObject's layoutAndDrawAll
+                this._w = this.image.canvasImage.width;
+                this._h = this.image.canvasImage.height;
+            }
+        }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // Function that is called when our loading is complete
@@ -104,11 +118,13 @@ export class IconObject extends DrawnObjectBase {
         // if we don't have an image bail out
         if (!this.image || !this.image.canvasImage)
             return;
+        // based on whether or not we resize the image, draw or resize and draw
         if (this.resizesImage) {
-            //=== YOUR CODE HERE ===
+            ctx.drawImage(this.image.canvasImage, 0, 0, this.w, this.h);
         }
         else {
-            //=== YOUR CODE HERE ===
+            this._resize();
+            ctx.drawImage(this.image.canvasImage, 0, 0, this.w, this.h);
         }
     }
 } // end of IconObject class

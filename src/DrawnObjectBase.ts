@@ -107,13 +107,14 @@ export class DrawnObjectBase {
     protected _x : number = 0;
     public get x() : number {return this._x;}  
     public set x(v : number) {
+
+        // if we get a new value, set x and call damage
         if (v !== this.x) {
+            this._x = v;
+            this.damageAll();
 
-             // don't forget to declare damage whenever something changes
-             // that could affect the display
-
-            //=== YOUR CODE HERE ===
         }
+
     }    
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
@@ -121,7 +122,14 @@ export class DrawnObjectBase {
     protected _y : number = 0;
     public get y() : number {return this._y;}
     public set y(v : number) {
-        //=== YOUR CODE HERE ===
+
+        // if we get a new value, set y and call damage
+        if (v !== this.y) {
+            this._y = v;
+            this.damageAll();
+       }
+
+       
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -139,7 +147,18 @@ export class DrawnObjectBase {
     protected _w : number = 42;
     public get w() : number {return this._w;}
     public set w(v : number) {
-            this._w = v;
+
+        // withinConfig will handle returning a value change within a fixed 
+        // or elastic configuration
+        let newValue = SizeConfig.withinConfig(v, this.wConfig)
+
+        // only change and declare damage if value is new
+        if (newValue !== this.w) {
+            this._w = newValue;
+            this.damageAll();
+        }
+
+       
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -173,7 +192,15 @@ export class DrawnObjectBase {
     protected _h : number = 13;
     public get h() : number {return this._h;}
     public set h(v : number) {
-        //=== YOUR CODE HERE ===
+        // withinConfig will handle returning a value change within a fixed 
+        // or elastic configuration
+        let newValue = SizeConfig.withinConfig(v, this.hConfig)
+
+        // only change and declare damage if value is new
+        if (newValue !== this.h) {
+            this._h = newValue;
+           this.damageAll();
+        }
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -182,7 +209,7 @@ export class DrawnObjectBase {
     protected _hConfig : SizeConfigLiteral = SizeConfig.elastic(13);
     public get hConfig() : SizeConfigLiteral {return this._hConfig;}
     public set hConfig(v : SizeConfigLiteral) {
-        //=== YOUR CODE HERE ===
+        this._hConfig = v;
     }
 
     public get naturalH() : number {return this._hConfig.nat;}
@@ -215,7 +242,14 @@ export class DrawnObjectBase {
     protected _visible : boolean = true;
     public get visible() : boolean {return this._visible;}
     public set visible(v : boolean) {
-            //=== YOUR CODE HERE ===
+
+        // if we get a new value, set visible and call damage
+        if ( this._visible != v)
+        {
+            this._visible = v;
+            this.damageAll();
+        }
+        
     }
 
     //-------------------------------------------------------------------
@@ -440,7 +474,16 @@ export class DrawnObjectBase {
     public applyClip(ctx : DrawContext, 
                      clipx : number, clipy : number, clipw : number, cliph : number) 
     {
-        //=== YOUR CODE HERE ===
+
+        // we begin the path, create the clipping rectangle, and clip
+        ctx.beginPath();
+        ctx.rect(clipx, clipy, clipw, cliph);
+        ctx.clip();
+
+        // ... note we do NOT want to call ctx.closePath(), that is handled by
+        // ctx.rect(...)
+
+        
     }
 
     // Utility routine to create a new rectangular path at our bounding box.
@@ -505,7 +548,15 @@ export class DrawnObjectBase {
         // save the state of the context object on its internal stack
         ctx.save();
 
-        //=== YOUR CODE HERE ===
+        // get child from list of children...
+        let child : DrawnObjectBase = this.children[childIndx];
+
+        //... we transform so that we are in the child's local coordinates...
+        ctx.translate(child.x, child.y);
+
+        //... and clip to the child's bounding box
+        this.applyClip(ctx, 0, 0, child.w, child.h);
+
     }
 
     
@@ -631,8 +682,12 @@ export class DrawnObjectBase {
     // anything which might no longer be correct, but can safely be pessimistic by 
     // declaring extra damage. This method passes a damage report up the tree via 
     // our parent.
-    public damageArea(xv: number, yv : number, wv : number, hv : number) : void {
-        //=== YOUR CODE HERE ===
+    public damageArea(xv: number, yv : number, wv : number, hv : number) : void { 
+        // report damage to parent in our coordinates
+        if(this.parent)
+        {
+            this.parent._damageFromChild(this, xv, yv, wv,hv);
+        }
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -656,7 +711,12 @@ export class DrawnObjectBase {
                                xInChildCoords: number, yInChildCoords: number, 
                                wv : number, hv: number) : void 
     {
-            //=== YOUR CODE HERE ===
+        // convert from child to our (parent) coordinate system
+        let x : number = xInChildCoords + child.x;
+        let y : number = yInChildCoords + child.y;
+
+        // pass the report up the tree (or handle it if TopObject)
+        this.damageArea(x, y, wv, hv);
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .

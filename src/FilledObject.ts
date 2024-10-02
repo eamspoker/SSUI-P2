@@ -27,12 +27,30 @@ export class FilledObject extends DrawnObjectBase {
     // Override w & h setters so they enforce fixed size
     public override get w() {return super.w;}  
     public override set w(v : number) {
-        //=== YOUR CODE HERE ===
+        // we change to a new fixed config with v if v is a new value
+        if (!(v === this.w))
+        {
+            this._w = v;
+            this._wConfig = SizeConfig.fixed(v);
+            // damage at new size
+            this.damageAll();
+    
+        }
+      
+
     }
 
     public override get h() {return super.h;}
     public override set h(v : number) {
-        return;
+        // we change to a new fixed config with v if v is a new value
+        if (!(v === this.h))
+        {   
+            this._h = v;
+            this._hConfig = SizeConfig.fixed(v);
+            // damage at new size
+            this.damageAll();
+        }
+
     }
 
 
@@ -72,7 +90,8 @@ export class FilledObject extends DrawnObjectBase {
             ctx.fillStyle = this.color.toString();
         }
         
-        ctx.fillRect(this.x, this.y, this.w, this.h);
+        // filled object is drawn as a rectangle that fills its bounding box
+        ctx.fillRect(0, 0, this.w, this.h);
     }
 
     

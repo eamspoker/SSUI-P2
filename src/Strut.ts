@@ -28,14 +28,23 @@ export class Strut extends DrawnObjectBase {
     // Override w & h setters so they enforce fixed size
     public override get w() {return super.w;}  
     public override set w(v : number) {
-        this.w = v;
+        // if it's a new value, we call the superclass 
+        // (defined in DrawObjectBase), which handles fixed size & damage
+        if (this.w != v)
+        {
+            super.w = v;
+        }
     }
 
     public override get h() {return super.h;}
     public override set h(v : number) {
-        this.h = v;
+        // if it's a new value, we call the superclass 
+        // (defined in DrawObjectBase), which handles fixed size & damage
+        if (this.h != v)
+        {
+            super.h = v;
+        }
     }
-
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 

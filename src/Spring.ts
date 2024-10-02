@@ -28,12 +28,26 @@ export class Spring extends DrawnObjectBase {
     // Override w & h setters so they enforce elastic size
     public override get w() {return super.w;}  
     public override set w(v : number) {
-        //=== YOUR CODE HERE ===
+
+        // if it's a new value, we call the superclass 
+        // (defined in DrawObjectBase), which handles elastic size & damage
+        if (this.w != v)
+        {
+            super.w = v;
+        }
+
     }
 
     public override get h() {return super.h;}
     public override set h(v : number) {
-        //=== YOUR CODE HERE ===
+
+        // if it's a new value, we call the superclass 
+        // (defined in DrawObjectBase), which handles elastic size & damage
+        if (this.h != v)
+        {
+            super.h = v;
+        }
+
     }
 
 

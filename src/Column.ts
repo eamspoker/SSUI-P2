@@ -91,7 +91,55 @@ export class Column extends Group {
     //
     // Our height is set to the height determined by stacking our children vertically.
     protected override _doLocalSizing() : void {
-        //=== YOUR CODE HERE ===
+
+        // piecewise minimums of each part of the configuration
+        let maxmaxWidth : number = 0;
+        let maxminWidth : number = 0;
+        let maxnatWidth : number = 0;
+
+        // set sum of min, max, nat 
+        this.hConfig.min = 0;
+        this.hConfig.max = 0;
+        this.hConfig.nat = 0;
+
+        // iterate across children
+        this.children.forEach(child => {
+
+            // sum of min, max, nat of child hConfig
+            this.hConfig.min += child.hConfig.min;
+            this.hConfig.max += child.hConfig.max;
+            this.hConfig.nat += child.hConfig.nat;
+
+
+            // set the maximum of the minimum width
+            if (child.wConfig.min > maxminWidth)
+            {
+                maxminWidth = child.wConfig.min;
+
+            }
+
+            // set the maximum of the maximum width
+            if (child.wConfig.max > maxmaxWidth)
+            {
+                maxmaxWidth = child.wConfig.max;
+
+            }
+
+            // set the maximum of the natural width
+            if (child.wConfig.nat > maxnatWidth)
+            {
+                maxnatWidth = child.wConfig.nat;
+
+            }
+
+        });
+
+
+
+        // set the width config to the properties
+        this.wConfig.min = maxminWidth;
+        this.wConfig.max = maxmaxWidth;
+        this.wConfig.nat = maxnatWidth;
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -155,7 +203,18 @@ export class Column extends Group {
         let availCompr = 0; 
         let numSprings = 0; 
 
-        //=== YOUR CODE HERE ===
+        // iterate through each child
+        this.children.forEach(child => {
+            if (!child.tagString().includes("Spring"))
+            {
+                // sum non-spring objects' compression and natural height
+                natSum += child.hConfig.nat;
+                availCompr += child.naturalH-child.minH;
+            } else {
+                // count spring objects
+                numSprings += 1;
+            }
+        });
 
         return [natSum, availCompr, numSprings];
     }
@@ -167,7 +226,19 @@ export class Column extends Group {
     // are no child springs, this does nothing (which has the eventual effect of leaving 
     // the space at the bottom of the column as a fallback strategy).
     protected _expandChildSprings(excess : number, numSprings : number) : void {
-        //=== YOUR CODE HERE ===
+        if (numSprings > 0)
+        {
+            let spacePerSpring : number = excess/numSprings;
+
+            // iterate through each child, set springs' height to spacePerSpring
+            this.children.forEach(child => {
+                if (child.tagString().includes("Spring"))
+                {
+                    child.h = spacePerSpring;
+                }
+
+            });
+        }
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -187,7 +258,13 @@ export class Column extends Group {
         // each child, then subtract that fraction of the total shortfall 
         // from the natural height of that child, to get the assigned height.
         for (let child of this.children) {
-            //=== YOUR CODE HERE ===
+
+            // the fraction of available compression space this child has
+            let fraction : number = (child.hConfig.nat-child.hConfig.min) / availCompr;
+
+            // compress child by a proportion of shortfall
+            child.h = child.h - shortfall*fraction;
+
         }
 }
 
@@ -231,7 +308,34 @@ export class Column extends Group {
 
         // apply our justification setting for the horizontal
         
-        //=== YOUR CODE HERE ===
+        if(this.wJustification == "center")
+        {
+            // center child: this.w/2 sets the left edge of child to 
+            // the center of the parent, we subtract child.w/2 to center the
+            // child object 
+            this.children.forEach(child => {
+                child.x = this.w/2 - child.w/2;
+            });
+
+        } else if(this.wJustification == "right")
+        {
+            // right alignment: we place the left edge of the child
+            // at this.w-child.w so that the right edge is on the right
+            // edge of the parent
+            this.children.forEach(child => {
+                child.x = this.w-child.w;
+            });
+
+        } else {
+            //  (left alignment)
+            // we place the left edge of the child at 0 (left edge of parent)
+            this.children.forEach(child => {
+                child.x = 0;
+
+            });
+
+
+        }
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
