@@ -203,16 +203,16 @@ export class TopObject extends DrawnObjectBase {
     public override damageArea(xv: number, yv: number, wv: number, hv: number): void {
 
         // we only set the damage rectangle if it's larger than the previous one
-        if (wv >= this._damageRectW &&  hv >= this._damageRectH )
-        {
+        // if (wv >= this._damageRectW &&  hv >= this._damageRectH )
+        // {
 
             // set all aspects of the damage rect: x,y,width, height
-            this._damageRectX = xv;
-            this._damageRectY = yv;
-            this._damageRectW = wv;
-            this._damageRectH = hv;
+            this._damageRectX = Math.min(xv, this._damageRectX);
+            this._damageRectY = Math.min(yv, this._damageRectY);
+            this._damageRectW = Math.max(wv, this._damageRectW);
+            this._damageRectH = Math.max(hv, this._damageRectH);
         
-        }
+        // }
 
         this._damaged = true;
     }

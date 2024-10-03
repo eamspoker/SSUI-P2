@@ -23,7 +23,7 @@ export class Spring extends DrawnObjectBase {
     get w() { return super.w; }
     set w(v) {
         // if it's a new value, we call the superclass 
-        // (defined in DrawObjectBase), which handles elastic size
+        // (defined in DrawObjectBase), which handles elastic size & damage
         if (this.w != v) {
             super.w = v;
         }
@@ -31,7 +31,7 @@ export class Spring extends DrawnObjectBase {
     get h() { return super.h; }
     set h(v) {
         // if it's a new value, we call the superclass 
-        // (defined in DrawObjectBase), which handles elastic size
+        // (defined in DrawObjectBase), which handles elastic size & damage
         if (this.h != v) {
             super.h = v;
         }

@@ -69,6 +69,7 @@ export class TopObject extends DrawnObjectBase {
     //-------------------------------------------------------------------
     // For this object we clear the canvas behind the children that we draw
     _drawSelfOnly(ctx) {
+        // clear the entire canvas
         ctx.clearRect(0, 0, this.owningCanvas.width, this.owningCanvas.height);
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -154,12 +155,15 @@ export class TopObject extends DrawnObjectBase {
     // Override the routine that declares damage for this object to record the 
     // damage instead of passing it up the tree (since there is no up  from here).
     damageArea(xv, yv, wv, hv) {
-        if (wv >= this._damageRectW && hv >= this._damageRectH) {
-            this._damageRectX = xv;
-            this._damageRectY = yv;
-            this._damageRectW = wv;
-            this._damageRectH = hv;
-        }
+        // we only set the damage rectangle if it's larger than the previous one
+        // if (wv >= this._damageRectW &&  hv >= this._damageRectH )
+        // {
+        // set all aspects of the damage rect: x,y,width, height
+        this._damageRectX = Math.min(xv, this._damageRectX);
+        this._damageRectY = Math.min(yv, this._damageRectY);
+        this._damageRectW = Math.max(wv, this._damageRectW);
+        this._damageRectH = Math.max(hv, this._damageRectH);
+        // }
         this._damaged = true;
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  

@@ -24,13 +24,15 @@ export class TextObject extends DrawnObjectBase {
     }
     get text() { return this._text; }
     set text(v) {
+        // if v is new, we update and damage all
         if (this._text !== v) {
+            this._text = v;
             this.damageAll();
         }
-        this._text = v;
     }
     get font() { return this._font; }
     set font(v) {
+        // if v is new, we update and damage all
         if (this._font !== v) {
             this.damageAll();
         }
@@ -40,10 +42,13 @@ export class TextObject extends DrawnObjectBase {
     set padding(v) {
         if (typeof v === 'number')
             v = { w: v, h: v };
+        // we can now check if v is new because v is guaranteed to be a
+        // SizeLiteral
+        // we then set and handle damage
         if (this._padding !== v) {
+            this._padding = v;
             this.damageAll();
         }
-        this._padding = v;
     }
     get renderType() { return this._renderType; }
     set rederType(v) { this._renderType = v; }
@@ -54,7 +59,9 @@ export class TextObject extends DrawnObjectBase {
     //-------------------------------------------------------------------
     // Recalculate the size of this object based on the size of the text
     _recalcSize(ctx) {
+        // textMeasure contains w (width), h (height), baseln (baseline)
         let textMeasure = this._measureText(this.text, this.font, ctx);
+        // add padding for each side and set width, height
         this.w = textMeasure.w + this.padding.w * 2;
         this.h = textMeasure.h + this.padding.h * 2;
         // set the size configuration to be fixed at that size
@@ -79,13 +86,17 @@ export class TextObject extends DrawnObjectBase {
             else {
                 clr = this.color.toString();
             }
+            // meas contains w (width), h (height), baseln (baseline)
             const meas = this._measureText(this.text, this.font, ctx);
+            // set font before we draw
             ctx.font = this.font;
             if (this.renderType === "fill") {
+                // render text filled in
                 ctx.fillStyle = clr;
                 ctx.fillText(this.text, this.padding.w, meas.baseln);
             }
             else {
+                // render outline of text (stroke type)
                 ctx.strokeStyle = clr;
                 ctx.strokeText(this.text, this.padding.w, meas.baseln);
             }
