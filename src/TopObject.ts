@@ -202,8 +202,11 @@ export class TopObject extends DrawnObjectBase {
     // damage instead of passing it up the tree (since there is no up  from here).
     public override damageArea(xv: number, yv: number, wv: number, hv: number): void {
 
-        // we only set the damage rectangle if it's larger than the previous one
-            // set all aspects of the damage rect: x,y,width, height
+        // if we are damaged, we only set the damage rectangle if 
+        // it's larger than the previous one. To do this, we take
+        // the minimum x,y coordinates and the largest width and height
+        
+        // set all aspects of the damage rect: x,y,width, height
             this._damageRectX = Math.min(xv, this._damageRectX);
             this._damageRectY = Math.min(yv, this._damageRectY);
             this._damageRectW = Math.max(wv, this._damageRectW);
