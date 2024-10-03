@@ -155,13 +155,23 @@ export class TopObject extends DrawnObjectBase {
     // Override the routine that declares damage for this object to record the 
     // damage instead of passing it up the tree (since there is no up  from here).
     damageArea(xv, yv, wv, hv) {
-        // we only set the damage rectangle if it's larger than the previous one
-        // set all aspects of the damage rect: x,y,width, height
-        this._damageRectX = Math.min(xv, this._damageRectX);
-        this._damageRectY = Math.min(yv, this._damageRectY);
-        this._damageRectW = Math.max(wv, this._damageRectW);
-        this._damageRectH = Math.max(hv, this._damageRectH);
-        this._damaged = true;
+        // if we are damaged, we only set the damage rectangle if 
+        // it's larger than the previous one. To do this, we take
+        // the minimum x,y coordinates and the largest width and height
+        if (this.damaged) {
+            // set all aspects of the damage rect: x,y,width, height
+            this._damageRectX = Math.min(xv, this.x);
+            this._damageRectY = Math.min(yv, this.y);
+            this._damageRectW = Math.max(wv, this.w);
+            this._damageRectH = Math.max(hv, this.h);
+        }
+        else {
+            this._damageRectX = xv;
+            this._damageRectY = yv;
+            this._damageRectW = wv;
+            this._damageRectH = hv;
+            this._damaged = true;
+        }
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
     // Special routine to declare that damage has occured due to asynchronous

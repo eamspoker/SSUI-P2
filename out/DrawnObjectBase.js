@@ -163,6 +163,8 @@ export class DrawnObjectBase {
         let newValue = SizeConfig.withinConfig(v, this.wConfig);
         // only change and declare damage if value is new
         if (newValue !== this.w) {
+            // damage at old size as well
+            this.damageAll();
             this._w = newValue;
             this.damageAll();
         }
@@ -192,6 +194,8 @@ export class DrawnObjectBase {
         let newValue = SizeConfig.withinConfig(v, this.hConfig);
         // only change and declare damage if value is new
         if (newValue !== this.h) {
+            // damage at old size as well
+            this.damageAll();
             this._h = newValue;
             this.damageAll();
         }
@@ -585,10 +589,9 @@ export class DrawnObjectBase {
     // declaring extra damage. This method passes a damage report up the tree via 
     // our parent.
     damageArea(xv, yv, wv, hv) {
+        var _a;
         // report damage to parent in our coordinates
-        if (this.parent) {
-            this.parent._damageFromChild(this, xv, yv, wv, hv);
-        }
+        (_a = this.parent) === null || _a === void 0 ? void 0 : _a._damageFromChild(this, xv, yv, wv, hv);
     }
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     // Declare that the entire bounding box has been damaged.  This is the typical 

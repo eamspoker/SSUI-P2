@@ -30,6 +30,8 @@ export class FilledObject extends DrawnObjectBase {
         // we change to a new fixed config with v if v is a new value
         if (!(v === this.w))
         {
+            // damage at old size
+            this.damageAll();
             this._w = v;
             this._wConfig = SizeConfig.fixed(v);
             // damage at new size
@@ -45,6 +47,8 @@ export class FilledObject extends DrawnObjectBase {
         // we change to a new fixed config with v if v is a new value
         if (!(v === this.h))
         {   
+            // damage at old size
+            this.damageAll();
             this._h = v;
             this._hConfig = SizeConfig.fixed(v);
             // damage at new size

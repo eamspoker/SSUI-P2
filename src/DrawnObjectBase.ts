@@ -154,6 +154,8 @@ export class DrawnObjectBase {
 
         // only change and declare damage if value is new
         if (newValue !== this.w) {
+            // damage at old size as well
+            this.damageAll();
             this._w = newValue;
             this.damageAll();
         }
@@ -198,6 +200,8 @@ export class DrawnObjectBase {
 
         // only change and declare damage if value is new
         if (newValue !== this.h) {
+            // damage at old size as well
+            this.damageAll();
             this._h = newValue;
            this.damageAll();
         }
@@ -684,10 +688,8 @@ export class DrawnObjectBase {
     // our parent.
     public damageArea(xv: number, yv : number, wv : number, hv : number) : void { 
         // report damage to parent in our coordinates
-        if(this.parent)
-        {
-            this.parent._damageFromChild(this, xv, yv, wv,hv);
-        }
+        this.parent?._damageFromChild(this, xv, yv, wv,hv);
+
     }
 
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .

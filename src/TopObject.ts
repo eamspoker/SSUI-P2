@@ -206,14 +206,27 @@ export class TopObject extends DrawnObjectBase {
         // it's larger than the previous one. To do this, we take
         // the minimum x,y coordinates and the largest width and height
         
+        if (this.damaged)
+        {
         // set all aspects of the damage rect: x,y,width, height
-            this._damageRectX = Math.min(xv, this._damageRectX);
-            this._damageRectY = Math.min(yv, this._damageRectY);
-            this._damageRectW = Math.max(wv, this._damageRectW);
-            this._damageRectH = Math.max(hv, this._damageRectH);
+            this._damageRectX = Math.min(xv, this.x);
+            this._damageRectY = Math.min(yv, this.y);
+            this._damageRectW = Math.max(wv, this.w);
+            this._damageRectH = Math.max(hv, this.h);
+
+        } else {
+
+            this._damageRectX = xv;
+            this._damageRectY = yv;
+            this._damageRectW = wv;
+            this._damageRectH = hv;
+            this._damaged = true;
+
+        }
+
+
         
 
-        this._damaged = true;
     }
     
     //. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  
